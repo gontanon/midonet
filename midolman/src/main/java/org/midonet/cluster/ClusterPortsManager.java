@@ -148,6 +148,7 @@ public class ClusterPortsManager extends ClusterManager<PortBuilder> {
         return new Runnable() {
             @Override
             public void run() {
+                log.debug("Port liveness changed: {}", portId);
                 getConfig(portId);
             }
         };
@@ -160,6 +161,7 @@ public class ClusterPortsManager extends ClusterManager<PortBuilder> {
                // this will be executed by the watcher in PortConfigCache
                // that is triggered by ZkDirectory, that has the same reactor as
                // the cluster client.
+                log.debug("Port changed: {}", portId);
                getConfig(portId);
             }
         };

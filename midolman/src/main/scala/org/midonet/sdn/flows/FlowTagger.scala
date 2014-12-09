@@ -341,7 +341,7 @@ object FlowTagger {
      * Tag for the flows associated with a meter
      */
     case class UserTag(name: String) extends FlowTag with MeterTag {
-        override def toString = s"custom:$meterName"
+        override def toString = s"user:$name"
     }
 
     val cachedUserTags = new ThreadLocal[TagsTrie] {

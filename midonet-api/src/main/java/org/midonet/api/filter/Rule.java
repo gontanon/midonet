@@ -115,6 +115,10 @@ public abstract class Rule extends Condition {
         this.meterName = meterName;
     }
 
+    public String getMeterName() {
+        return meterName;
+    }
+
     public Map<String, String> getProperties() {
         return properties;
     }

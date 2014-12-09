@@ -41,7 +41,7 @@ public abstract class Rule {
     private Condition condition;
     public Action action;
     public UUID chainId;
-    public FlowTagger.FlowTag meter;
+    public FlowTagger.UserTag meter;
     private Map<String, String> properties = new HashMap<String, String>();
 
     public Rule(Condition condition, Action action) {
@@ -57,6 +57,10 @@ public abstract class Rule {
 
     public void setMeterName(String meterName) {
         meter = FlowTagger.tagForUserMeter(meterName);
+    }
+
+    public String getMeterName() {
+        return meter != null ? meter.name() : null;
     }
 
     // Default constructor for the Jackson deserialization.

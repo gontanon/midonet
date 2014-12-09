@@ -18,6 +18,8 @@ package org.midonet.midolman.rules;
 
 import java.util.*;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.midonet.sdn.flows.FlowTagger;
@@ -41,6 +43,7 @@ public abstract class Rule {
     private Condition condition;
     public Action action;
     public UUID chainId;
+    @JsonIgnore
     public FlowTagger.UserTag meter;
     private Map<String, String> properties = new HashMap<String, String>();
 
@@ -55,10 +58,12 @@ public abstract class Rule {
         this.chainId = chainId;
     }
 
+    @JsonProperty
     public void setMeterName(String meterName) {
         meter = FlowTagger.tagForUserMeter(meterName);
     }
 
+    @JsonProperty
     public String getMeterName() {
         return meter != null ? meter.name() : null;
     }

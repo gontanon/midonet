@@ -576,7 +576,8 @@ public class Converter {
 
         return rule
                 .setChainId(ruleConfig.chainId)
-                .setProperties(ruleConfig.getProperties());
+                .setProperties(ruleConfig.getProperties())
+                .setMeterName(ruleConfig.getMeterName());
     }
 
     public static BridgeDhcpZkManager.Host toDhcpHostConfig(

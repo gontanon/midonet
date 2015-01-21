@@ -514,23 +514,11 @@ class RoutingHandler(var rport: RouterPort, val bgpIdx: Int,
                         log.error("AddPeerRoute not expected in phase NotStarted")
                     case Starting =>
                         stash()
+                    case Started if peerRoutes.size > config.getMaxBgpPeerRoutes =>
+                        log.warning(s"($phase) Max number of peer routes reached " +
+                            s"(${config.getMaxBgpPeerRoutes}), please check the " +
+                            "max_bgp_peer_routes config option.")
                     case Started =>
-                        if (peerRoutes.size > 100) {
-                            /*
-                             * TODO(abel) in order not to overwhelm the cluster,
-                             * we will limit the max amount of routes we store
-                             * at least for this version of the code.
-                             * Note that peer routes, if not limited by bgpd
-                             * or by the peer, can grow to hundreds of thousands
-                             * of entries.
-                             * I won't use a constant for this number because
-                             * this problem should be tackled in a more elegant
-                             * way and it's not used elsewhere.
-                             */
-                            log.error("Max amount of peer routes reached (100)")
-                            return
-                        }
-
                         val route = new Route()
                         route.setRouterId(rport.deviceID)
                         route.setDstNetworkAddr(destination.getAddress.toString)

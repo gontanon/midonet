@@ -33,6 +33,9 @@ import org.midonet.odp.ports._
 import org.midonet.midolman.state.{MockStateStorage, FlowStateStorageFactory}
 
 class TestableDpC extends DatapathController {
+    midolmanConfig = ConfigProvider.providerForIniConfig(new HierarchicalConfiguration)
+        .getConfig(classOf[MidolmanConfig])
+
     override def storageFactory = new FlowStateStorageFactory() {
         override def create() = new MockStateStorage()
     }

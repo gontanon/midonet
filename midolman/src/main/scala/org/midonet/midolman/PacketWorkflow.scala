@@ -157,19 +157,19 @@ class PacketWorkflow(protected val dpState: DatapathState,
     }
 
     private def addTranslatedFlow(pktCtx: PacketContext,
-                                  wildFlow: WildcardFlow): Unit = {
+                                  wildFlow: WildcardFlow): Unit =
         if (pktCtx.packet.getReason == Packet.Reason.FlowActionUserspace) {
             pktCtx.runFlowRemovedCallbacks()
+            addToActionsCacheAndInvalidate(pktCtx, wildFlow.actions)
+            executePacket(pktCtx, wildFlow.getActions)
         } else {
             // ApplyState needs to happen before we add the wildcard flow
             // because it adds callbacks to the PacketContext and it can also
             // result in a NotYet exception being thrown.
             applyState(pktCtx, wildFlow.getActions)
+            executePacket(pktCtx, wildFlow.getActions)
             handleFlow(pktCtx, wildFlow)
         }
-
-        executePacket(pktCtx, wildFlow.getActions)
-    }
 
     private def handleFlow(pktCtx: PacketContext, wildFlow: WildcardFlow): Unit = {
         if (pktCtx.isGenerated) {

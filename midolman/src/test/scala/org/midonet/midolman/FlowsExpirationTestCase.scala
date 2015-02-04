@@ -72,7 +72,7 @@ class FlowsExpirationTestCase extends MidolmanTestCase with Dilation {
 
         initializeDatapath() should not be (null)
 
-        flowProbe().expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
+        datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
 
         // Now disable sending messages to the DatapathController
         dpProbe().testActor ! "stop"

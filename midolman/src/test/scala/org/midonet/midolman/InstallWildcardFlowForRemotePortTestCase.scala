@@ -52,7 +52,7 @@ class InstallWildcardFlowForRemotePortTestCase extends MidolmanTestCase {
         initializeDatapath() should not be (null)
 
         val datapath =
-            flowProbe().expectMsgType[DatapathController.DatapathReady].datapath
+            datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady].datapath
         datapath should not be null
 
         portsProbe.expectMsgClass(classOf[LocalPortActive])

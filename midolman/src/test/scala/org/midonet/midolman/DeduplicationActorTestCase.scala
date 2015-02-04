@@ -16,6 +16,7 @@ import akka.actor.Props
 import akka.testkit.TestActorRef
 import com.yammer.metrics.core.MetricsRegistry
 import org.junit.runner.RunWith
+import org.midonet.midolman.host.interfaces.InterfaceDescription
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.junit.JUnitRunner
 
@@ -85,6 +86,7 @@ class DeduplicationActorTestCase extends MidolmanSpec {
             override def isVtepTunnellingPort(portNumber: Short): Boolean = ???
             override def isOverlayTunnellingPort(portNumber: Short): Boolean = ???
             override def vtepTunnellingOutputAction: FlowActionOutput = ???
+            override def getDescForInterface(itfName: String): Option[InterfaceDescription] = ???
         })
         dda.hookPacketHandler()
     }

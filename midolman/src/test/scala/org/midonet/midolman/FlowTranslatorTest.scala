@@ -12,6 +12,7 @@ import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.event.{Logging, LoggingAdapter}
 import org.junit.runner.RunWith
+import org.midonet.midolman.host.interfaces.InterfaceDescription
 import org.scalatest.junit.JUnitRunner
 
 import org.midonet.cluster.data.{TunnelZone, Port, Bridge, Chain}
@@ -521,6 +522,7 @@ class FlowTranslatorTest extends MidolmanSpec {
         def isVtepTunnellingPort(portNumber: Short): Boolean =
             portNumber == vxlanPortNumber
         def isOverlayTunnellingPort(portNumber: Short): Boolean = false
+        override def getDescForInterface(itfName: String): Option[InterfaceDescription] = ???
     }
 
     def translationScenario(name: String)

@@ -70,7 +70,7 @@ class LinksTestCase extends MidolmanTestCase
         setupRoutes()
 
         // TODO remove, possibly
-        val datapath = flowProbe().expectMsgType[DatapathReady].datapath
+        val datapath = datapathReadyEventsProbe.expectMsgType[DatapathReady].datapath
         datapath should not be null
 
         drainProbes()

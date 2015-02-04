@@ -153,7 +153,7 @@ class RouterSimulationTestCase extends MidolmanTestCase with RouterHelper
             }
         }
 
-        flowProbe().expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
+        datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
         drainProbes()
     }
 

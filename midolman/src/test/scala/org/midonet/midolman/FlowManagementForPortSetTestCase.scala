@@ -65,7 +65,7 @@ class FlowManagementForPortSetTestCase extends MidolmanTestCase {
 
         initializeDatapath() should not be (null)
 
-        flowProbe().expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
+        datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
 
         tunnelPortNo = dpState.asInstanceOf[DatapathStateManager]
                               .greOverlayTunnellingOutputAction.getPortNumber

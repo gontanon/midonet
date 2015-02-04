@@ -100,6 +100,7 @@ trait MidolmanTestCase extends Suite with BeforeAndAfter
     var portsProbe: TestProbe = null
     var discardPacketProbe: TestProbe = null
     var flowUpdateProbe: TestProbe = null
+    var datapathReadyEventsProbe: TestProbe = null
 
     val clock = new MockClock
 
@@ -138,6 +139,7 @@ trait MidolmanTestCase extends Suite with BeforeAndAfter
             registerProbe(sProbe, klass, actors.eventStream)
         }
         datapathEventsProbe = makeEventProbe(classOf[DpPortCreate])
+        datapathReadyEventsProbe = makeEventProbe(classOf[DatapathReady])
         packetInProbe = makeEventProbe(classOf[PacketIn])
         packetsEventsProbe = makeEventProbe(classOf[PacketsExecute])
         wflowAddedProbe = makeEventProbe(classOf[WildcardFlowAdded])

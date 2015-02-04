@@ -58,7 +58,7 @@ class DnatPlusSnatTestCase extends MidolmanTestCase
         materializePort(rtrPort2, host, "port2")
         requestOfType[LocalPortActive](portsProbe)
 
-        flowProbe().expectMsgType[DatapathController.DatapathReady].
+        datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady].
             datapath should not be (null)
         drainProbes()
 

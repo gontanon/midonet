@@ -39,7 +39,7 @@ class InstallWildcardFlowTestCase extends MidolmanTestCase {
 
         drainProbes()
         initializeDatapath() should not be (null)
-        flowProbe().expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
+        datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
         portsProbe.expectMsgClass(classOf[LocalPortActive])
         portsProbe.expectMsgClass(classOf[LocalPortActive])
 

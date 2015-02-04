@@ -92,7 +92,7 @@ trait VMsBehindRouterFixture extends SimulationHelper with
                 materializePort(port, host, name)
                 requestOfType[LocalPortActive](portsProbe)
         }
-        flowProbe().expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
+        datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady].datapath should not be (null)
         vmPortNumbers = ensureAllPortsUp(vmPorts)
         drainProbes()
     }

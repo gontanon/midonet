@@ -36,7 +36,8 @@ object PacketsEntryPoint extends Referenceable {
     case object _GetConditionListFromVta
 }
 
-class PacketsEntryPoint extends Actor with ActorLogWithoutPath {
+class PacketsEntryPoint extends Actor with ActorLogWithoutPath
+                                      with DatapathReadySubscriberActor {
 
     import DatapathController.DatapathReady
     import DeduplicationActor._

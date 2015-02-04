@@ -233,7 +233,7 @@ class DhcpTestCase extends MidolmanTestCase
             .setIp(vm2IP.getAddress))
         addDhcpHost(bridge, dhcpSubnet2, dhcpHost2)
 
-        flowProbe().expectMsgType[DatapathController.DatapathReady]
+        datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady]
                    .datapath should not be (null)
         drainProbes()
     }

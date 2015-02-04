@@ -153,7 +153,7 @@ class FloatingIpTestCase extends MidolmanTestCase
         // TODO needed?
         clusterDataClient().routersUpdate(router)
 
-        flowProbe().expectMsgType[DatapathController.DatapathReady]
+        datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady]
                    .datapath should not be (null)
         drainProbes()
     }

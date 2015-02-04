@@ -16,11 +16,7 @@ import com.google.inject.{Inject, Injector}
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
 
-import org.midonet.midolman.DatapathController
-import org.midonet.midolman.FlowController
-import org.midonet.midolman.NetlinkCallbackDispatcher
-import org.midonet.midolman.PacketsEntryPoint
-import org.midonet.midolman.SupervisorActor
+import org.midonet.midolman._
 import org.midonet.midolman.config.MidolmanConfig
 import org.midonet.midolman.l4lb.HealthMonitor
 import org.midonet.midolman.routingprotocols.RoutingManagerActor
@@ -62,7 +58,9 @@ class MidolmanActorsService extends AbstractService {
             withDispatcher("actors.pinned-dispatcher"),HealthMonitor.Name),
         (propsFor(classOf[PacketsEntryPoint]), PacketsEntryPoint.Name),
         (propsFor(classOf[NetlinkCallbackDispatcher]),
-            NetlinkCallbackDispatcher.Name))
+            NetlinkCallbackDispatcher.Name),
+        (propsFor(classOf[MtuIncreaser]).
+            withDispatcher("actors.pinned-dispatcher"), MtuIncreaser.Name))
 
     protected var supervisorActor: ActorRef = _
     private var childrenActors: List[ActorRef] = Nil

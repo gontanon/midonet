@@ -20,6 +20,7 @@ import com.yammer.metrics.core.Clock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.midonet.midolman.MtuIncreaser;
 import org.midonet.midolman.DatapathController;
 import org.midonet.midolman.FlowController;
 import org.midonet.midolman.NetlinkCallbackDispatcher;
@@ -101,6 +102,7 @@ public class MidolmanActorsModule extends PrivateModule {
         //bind(InterfaceScanner.class).to(DefaultInterfaceScanner.class);
         bind(RoutingManagerActor.class);
         bind(HealthMonitor.class);
+        bind(MtuIncreaser.class);
     }
 
     protected void bindMidolmanActorsService() {

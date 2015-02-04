@@ -92,7 +92,7 @@ class RouterFlowInvalidationTestCase extends MidolmanTestCase
         actors.eventStream.subscribe(tagEventProbe.ref, classOf[RouterInvTrieTagCountModified])
         initializeDatapath() should not be null
 
-        flowProbe().expectMsgType[DatapathController.DatapathReady].datapath should not be null
+        datapathReadyEventsProbe.expectMsgType[DatapathController.DatapathReady].datapath should not be null
 
         inPort = newRouterPort(clusterRouter, MAC.fromString(macInPort),
             ipInPort, ipInPort, 32)

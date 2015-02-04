@@ -18,7 +18,7 @@ import org.midonet.midolman.logging.ActorLogWithoutPath
 import org.midonet.midolman.state.{ZkConnectionAwareWatcher, StateAccessException}
 import org.midonet.midolman.topology.VirtualTopologyActor.PortRequest
 import org.midonet.midolman.topology.VirtualTopologyActor
-import org.midonet.midolman.{NotYet, Ready, FlowTranslator, DatapathState, DatapathController, FlowController}
+import org.midonet.midolman._
 import org.midonet.netlink.AfUnix
 import org.midonet.odp.flows.FlowActions.{output, userspace}
 import org.midonet.odp.ports.NetDevPort
@@ -102,7 +102,8 @@ class RoutingHandler(var rport: RouterPort, val bgpIdx: Int,
                      val config: MidolmanConfig,
                      val connWatcher: ZkConnectionAwareWatcher,
                      val selectLoop: SelectLoop)
-    extends UntypedActorWithStash with ActorLogWithoutPath with FlowTranslator {
+    extends UntypedActorWithStash with ActorLogWithoutPath with FlowTranslator
+                                  with DatapathReadySubscriberActor {
 
     import RoutingHandler._
     import DatapathController._

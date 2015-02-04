@@ -199,8 +199,8 @@ object FlowController extends Referenceable {
 }
 
 
-class FlowController extends Actor with ActorLogWithoutPath {
-
+class FlowController extends Actor with ActorLogWithoutPath
+                                   with DatapathReadySubscriberActor {
     import FlowController._
     import DatapathController.DatapathReady
 

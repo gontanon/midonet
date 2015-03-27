@@ -16,6 +16,40 @@
 
 schemaVersion = 1
 
+zookeeper {
+    session_timeout : 30s
+    session_timeout_description : """
+ZooKeeper session timeout."""
+
+    session_gracetime : ${zookeeper.session_timeout}
+    session_gracetime_description : """
+ZooKeeper session gracetime. A agent that remains disconnected from ZooKeeper
+for longer than this interval will give up reconnecting and reboot itself so
+as to start over with a fresh ZooKeeper connection. Note that agents will
+also reboot themselves if their ZooKeeper session expires."""
+
+    root_key : "/midonet/v1"
+    root_key_description : """
+Use this option to override the ZooKeeper path that MidoNet will use. Useful
+mainly for test environments.
+"""
+
+    curator_enabled : false
+    curator_enabled_description : """ """
+
+    cluster_storage_enabled : false
+    cluster_storage_enabled_description : """ """
+
+    max_retries : 10
+    max_retries_description : """ """
+
+    base_retry : 1s
+    base_retry_description : """ """
+
+    use_new_stack : false
+    use_new_stack_description : """ """
+}
+
 neutron_importer {
     enabled : false
     enabled_description : """ """

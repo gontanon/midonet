@@ -22,7 +22,15 @@ for n in 1 2 3; do
     fi
     rsync -av --exclude host_uuid.properties /etc/midolman/* /etc/midolman.$n
 
-    :> /etc/midolman.$n/midolman.conf
+    if test x"$ZOOKEEPER_STANDALONE" = xyes; then
+        ZK_HOSTS="10.0.0.2:2181"
+        CASS_SERVERS="10.0.0.5"
+        CASS_FACTOR=1
+    else
+        ZK_HOSTS="10.0.0.2:2181,10.0.0.3:2181,10.0.0.4:2181"
+        CASS_SERVERS="10.0.0.5,10.0.0.6,10.0.0.7"
+        CASS_FACTOR=3
+    fi
 
     # generates host uuid
     cat <<EOF > /etc/midolman.$n/host_uuid.properties
@@ -30,39 +38,14 @@ for n in 1 2 3; do
 host_uuid=00000000-0000-0000-0000-00000000000$n
 EOF
 
-    if test x"$ZOOKEEPER_STANDALONE" = xyes; then
-        cat << EOF >> /etc/midolman.$n/midolman.conf
+    cat << EOF > /etc/midolman.$n/midolman.conf
 [zookeeper]
-servers = 10.0.0.5
-zookeeper_hosts = 10.0.0.2:2181
+zookeeper_hosts = $ZK_HOSTS
 
-EOF
-    else
-        cat << EOF >> /etc/midolman.$n/midolman.conf
-[zookeeper]
-servers = 10.0.0.5
-zookeeper_hosts = 10.0.0.2:2181,10.0.0.3:2181,10.0.0.4:2181
-
-EOF
-    fi
-
-    if test x"$CASSANDRA_STANDALONE" = xyes; then
-        cat << EOF >> /etc/midolman.$n/midolman.conf
 [cassandra]
-servers = 10.0.0.5
-replication_factor = 1
+servers = $CASS_SERVERS
+replication_factor = $CASS_FACTOR
 
-EOF
-    else
-        cat << EOF >> /etc/midolman.$n/midolman.conf
-[cassandra]
-servers = 10.0.0.5,10.0.0.6,10.0.0.7
-replication_factor = 3
-
-EOF
-    fi
-
-    cat <<EOF >> /etc/midolman.$n/midolman.conf
 # Enable haproxy on the node.
 [haproxy_health_monitor]
 namespace_cleanup = true

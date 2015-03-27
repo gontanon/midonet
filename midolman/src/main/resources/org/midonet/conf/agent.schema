@@ -39,6 +39,15 @@ mainly for test environments.
 
     cluster_storage_enabled : false
     cluster_storage_enabled_description : """ """
+
+    max_retries : 10
+    max_retries_description : """ """
+
+    base_retry : 1s
+    base_retry_description : """ """
+
+    use_new_stack : false
+    use_new_stack_description : """ """
 }
 
 cassandra {

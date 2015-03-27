@@ -137,12 +137,18 @@ object MidoNodeConfigurator {
 
         val DEFAULTS = ConfigFactory.parseString(
             """
-              |zookeeper.zookeeper_hosts = "127.0.0.1:2181"
-              |zookeeper.midolman_root_key = ${zookeeper.root_key}
-              |zookeeper.root_key = "/midonet/v1"
-              |zookeeper.base_retry = 1s
-              |zookeeper.max_retries = 10
-              |zookeeper.use_new_stack = false
+            |zookeeper {
+            |    zookeeper_hosts = "127.0.0.1:2181"
+            |    session_timeout : 30s
+            |    session_gracetime : ${zookeeper.session_timeout}
+            |    root_key : "/midonet/v1"
+            |    midolman_root_key = ${zookeeper.root_key}
+            |    curator_enabled : false
+            |    cluster_storage_enabled : false
+            |    max_retries : 10
+            |    base_retry : 1s
+            |    use_new_stack : false
+            |}
             """.stripMargin)
 
         val ENVIRONMENT = ConfigFactory.parseString(

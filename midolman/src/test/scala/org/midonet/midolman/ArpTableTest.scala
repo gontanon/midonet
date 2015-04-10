@@ -107,7 +107,7 @@ class ArpTableTest extends MidolmanSpec {
     private val arps = new LinkedList[GeneratedPacket]()
     implicit private def dummyPacketContext: PacketContext = {
         val context = new PacketContext(0, null, new FlowMatch())
-        context.packetEmitter = new PacketEmitter(arps, actorSystem.deadLetters)
+        context.packetEmitter = PacketEmitter(arps, actorSystem.deadLetters)
         context
     }
 

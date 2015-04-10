@@ -24,10 +24,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
@@ -135,7 +137,7 @@ public class ClusterRouterManager extends ClusterManager<RouterBuilder> {
                .setLoadBalancer(config.loadBalancer);
 
         if (!isUpdate) {
-            builder.setArpCache(new ArpCacheImpl(arpTable, id));
+            builder.setArpCache(new ArpCacheImpl(arpTable, id, reactorLoop));
             arpTable.start();
             // note that the following may trigger a call to builder.build()
             // it should be the last call in the !isUpdate code path.
@@ -508,18 +510,19 @@ public class ClusterRouterManager extends ClusterManager<RouterBuilder> {
         }
     }
 
-
-    class ArpCacheImpl implements ArpCache,
+    static public class ArpCacheImpl implements ArpCache,
             ArpTable.Watcher<IPv4Addr, ArpCacheEntry> {
 
         public final UUID routerId;
         ArpTable arpTable;
+        Reactor reactorLoop;
         private final Set<Callback3<IPv4Addr, MAC, MAC>> listeners =
                         new LinkedHashSet<Callback3<IPv4Addr, MAC, MAC>>();
 
-        ArpCacheImpl(ArpTable arpTable, UUID routerId) {
+        public ArpCacheImpl(ArpTable arpTable, UUID routerId, Reactor reactor) {
             this.routerId = routerId;
             this.arpTable = arpTable;
+            this.reactorLoop = reactor;
             this.arpTable.addWatcher(this);
         }
 
@@ -558,19 +561,23 @@ public class ClusterRouterManager extends ClusterManager<RouterBuilder> {
             return arpTable.get(ipAddr);
         }
 
-        @Override
-        public void add(final IPv4Addr ipAddr, final ArpCacheEntry entry) {
-            reactorLoop.submit(new Runnable() {
-
+        protected Runnable addRunnable(final IPv4Addr ipAddr, final ArpCacheEntry entry) {
+            return new Runnable() {
                 @Override
                 public void run() {
                     try {
                         arpTable.put(ipAddr, entry);
                     } catch (Exception e) {
                         log.error("Failed adding ARP entry. IP: {} MAC: {}",
-                                  new Object[]{ipAddr, entry, e});
+                                new Object[]{ipAddr, entry, e});
                     }
-                }});
+                }
+            };
+        }
+
+        @Override
+        public void add(final IPv4Addr ipAddr, final ArpCacheEntry entry) {
+            reactorLoop.submit(addRunnable(ipAddr, entry));
         }
 
         @Override

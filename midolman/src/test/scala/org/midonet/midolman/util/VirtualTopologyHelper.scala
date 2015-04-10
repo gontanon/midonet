@@ -102,7 +102,7 @@ trait VirtualTopologyHelper { this: MidolmanServices =>
         val fmatch = new FlowMatch(FlowKeys.fromEthernetPacket(frame))
         fmatch.setInputPortNumber(inPortNumber)
         val context = new PacketContext(-1, new Packet(frame, fmatch), fmatch)
-        context.packetEmitter = new PacketEmitter(emitter, actorSystem.deadLetters)
+        context.packetEmitter = PacketEmitter(emitter, actorSystem.deadLetters)
         context.initialize(conntrackTx, natTx, HappyGoLuckyLeaser, traceTx)
         context.prepareForSimulation()
         context.inputPort = inPort

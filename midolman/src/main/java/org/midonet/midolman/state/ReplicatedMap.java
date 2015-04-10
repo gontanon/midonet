@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -136,9 +137,11 @@ public abstract class ReplicatedMap<K, V> {
         void cleanup(final List<Path> paths) {
             for (Path path : paths) {
                 try {
+                    System.out.println("cleanup, path: " + path.key);
                     dir.delete(encodePath(path.key, path.value, path.version));
                     ownedVersions.remove(path.version);
                 } catch (KeeperException e) {
+                    System.out.println("aborting cleanup");
                     log.error("DirectoryWatcher.run", e);
                     // TODO (guillermo) connectionWatcher.handleError()?
                     throw new RuntimeException(e);
@@ -315,11 +318,24 @@ public abstract class ReplicatedMap<K, V> {
             value = v;
         }
 
-        public void onSuccess(String result) {
-            // Claim the sequence number added by ZooKeeper.
-            Path p = decodePath(result);
-            synchronized(ReplicatedMap.this) {
-                ownedVersions.add(p.version);
+        public void onSuccess(final String result) {
+            if (dir instanceof ZkDirectory) {
+                ((ZkDirectory) dir).reactor.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("map write completed");
+                        Path p = decodePath(result);
+                        synchronized(ReplicatedMap.this) {
+                            ownedVersions.add(p.version);
+                        }
+                    }
+                }, 700, TimeUnit.MILLISECONDS);
+            } else {
+                // Claim the sequence number added by ZooKeeper.
+                Path p = decodePath(result);
+                synchronized(ReplicatedMap.this) {
+                    ownedVersions.add(p.version);
+                }
             }
         }
 

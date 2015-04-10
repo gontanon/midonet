@@ -16,6 +16,7 @@
 
 package org.midonet.midolman.state;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.midonet.util.eventloop.Reactor;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.ZooDefs.Ids;
@@ -33,7 +34,7 @@ public class ZkDirectory implements Directory {
     public ZkConnection zk;
     private String basePath;
     private List<ACL> acl;
-    private Reactor reactor;
+    public Reactor reactor;
 
     /**
      * @param zk       the zookeeper object

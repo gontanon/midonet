@@ -25,10 +25,25 @@ import org.midonet.packets.Ethernet
 
 object PacketEmitter {
     case class GeneratedPacket(egressPort: UUID, eth: Ethernet)
+
+    def apply(queue: Queue[GeneratedPacket], alert: ActorRef) =
+        new PacketEmitterImpl(queue, alert)
 }
 
-class PacketEmitter(queue: Queue[PacketEmitter.GeneratedPacket],
-                    alert: ActorRef) {
+trait PacketEmitter {
+    import PacketEmitter._
+
+    def pendingPackets: Int
+
+    def schedule(genPacket: GeneratedPacket): Boolean
+
+    def process(emit: GeneratedPacket => Unit): Unit
+
+    def poll(): GeneratedPacket
+}
+
+class PacketEmitterImpl(queue: Queue[PacketEmitter.GeneratedPacket],
+                        alert: ActorRef) extends PacketEmitter {
     import PacketEmitter._
 
     def pendingPackets = queue.size()

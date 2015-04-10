@@ -173,7 +173,7 @@ class PacketWorkflow(
     private val waitingRoom = new WaitingRoom[PacketContext](
                                         (simulationExpireMillis millis).toNanos)
 
-    private val genPacketEmitter = new PacketEmitter(new MpscArrayQueue(512), self)
+    private val genPacketEmitter = PacketEmitter(new MpscArrayQueue(512), self)
 
     protected val connTrackTx = new FlowStateTransaction(connTrackStateTable)
     protected val natTx = new FlowStateTransaction(natStateTable)

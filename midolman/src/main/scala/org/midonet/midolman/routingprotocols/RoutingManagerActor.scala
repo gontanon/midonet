@@ -30,7 +30,6 @@ import org.midonet.midolman.flows.FlowInvalidator
 import org.midonet.midolman.io.UpcallDatapathConnectionManager
 import org.midonet.midolman.logging.ActorLogWithoutPath
 import org.midonet.midolman.routingprotocols.RoutingHandler.PortActive
-import org.midonet.midolman.routingprotocols.RoutingManagerActor.{BgpStatus, ShowBgp}
 import org.midonet.midolman.state.ZkConnectionAwareWatcher
 import org.midonet.midolman.topology.VirtualTopologyActor
 import org.midonet.midolman.topology.VirtualTopologyActor.PortRequest
@@ -42,9 +41,6 @@ import org.midonet.util.eventloop.SelectLoop
 
 object RoutingManagerActor extends Referenceable {
     override val Name = "RoutingManager"
-
-    case class ShowBgp(port : UUID, cmd : String)
-    case class BgpStatus(status : Array[String])
 }
 
 class RoutingManagerActor extends ReactiveActor[LocalPortActive]
@@ -158,14 +154,6 @@ class RoutingManagerActor extends ReactiveActor[LocalPortActive]
             }
 
         case port: Port => // do nothing
-
-        case ShowBgp(portID : UUID, cmd : String) =>
-            portHandlers.get(portID) match {
-              case Some(handler) =>
-                handler forward RoutingHandler.BGPD_SHOW(cmd)
-              case None =>
-                sender ! BgpStatus(Array[String](s"No BGP handler is on $portID"))
-            }
 
         case _ => log.error("Unknown message.")
     }

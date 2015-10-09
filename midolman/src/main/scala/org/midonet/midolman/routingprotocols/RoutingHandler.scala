@@ -533,6 +533,9 @@ abstract class RoutingHandler(var rport: RouterPort, val bgpIdx: Int,
         bgpd.vty.setAs(bgpConfig.as)
         bgpd.vty.setRouterId(bgpConfig.as, bgpConfig.id)
 
+        if (bgpConfig.neighbors.nonEmpty)
+            bgpd.vty.setMaximumPaths(bgpConfig.as, bgpConfig.neighbors.size)
+
         for (neigh <- bgpConfig.neighbors.values) {
             bgpd.vty.addPeer(bgpConfig.as, neigh.address, neigh.as,
                 neigh.keepalive.getOrElse(config.bgpKeepAlive),

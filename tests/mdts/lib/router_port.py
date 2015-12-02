@@ -50,6 +50,9 @@ class RouterPort(ResourceBase):
         # TODO: calculate proper network address
         ipv4_net = ipv4_addr
 
+        if 'vni' in self._data:
+            mn_router_port.rtr_port_vni(self._data.get('vni'))
+
         if 'links_to' in self._data:
             self._context.register_link(self, self._data['links_to'])
 

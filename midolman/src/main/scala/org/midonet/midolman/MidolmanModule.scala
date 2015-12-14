@@ -226,7 +226,10 @@ class MidolmanModule(injector: Injector,
             val handler = new AggregateEventPollerHandler(
                     flowProcessor,
                     new EventPollerHandlerAdapter(new PacketExecutor(
-                        dpState, families, 1, 0, channelFactory, metrics)))
+                        dpState, families, 1, 0, channelFactory, metrics)),
+                    new EventPollerHandlerAdapter(new PacketExecutor(
+                        dpState, families, 1, 0, channelFactory, metrics,
+                        executesRecircPackets = true)))
             processors(0) = new BackChannelEventProcessor(
                 ringBuffer, handler, flowProcessor)
         } else {

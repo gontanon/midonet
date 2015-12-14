@@ -153,6 +153,7 @@ final class PortMapper(id: UUID, vt: VirtualTopology,
 
         if (port.hasVni && (peeringTable eq EMPTY_PEERING_TABLE)) {
             val id = fromProto(port.getId)
+            log.info(s"Starting peering table for a router port $id")
             peeringTable = vt.stateTables.routerPortPeeringTable(id)
             peeringTable.start()
         }

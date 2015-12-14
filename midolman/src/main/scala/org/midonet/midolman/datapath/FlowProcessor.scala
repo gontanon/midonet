@@ -127,7 +127,7 @@ class FlowProcessor(dpState: DatapathState,
         val mask = if (supportsMegaflow) {
             flowMask.clear()
             flowMask.calculateFor(flowMatch)
-            context.log.debug(s"Applying mask $flowMask")
+            context.log.debug(s"Applying mask $flowMask to $flowMatch")
             flowMask
         } else null
         writeFlow(datapathId, flowMatch.getKeys, actions, mask)

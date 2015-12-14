@@ -257,6 +257,7 @@ trait FlowTranslator {
         addFlowAndPacketAction(context, setKey(innerFlowKey))
         addFlowAndPacketAction(context, dpState.recircTunnelOutputAction)
         // origMatch describes the outer packet
+        context.wcmatch.clearSeenFields()
         matchOnOuterPacket(context.origMatch, innerFlowKey)
     }
 
@@ -284,6 +285,7 @@ trait FlowTranslator {
         addFlowAndPacketAction(context, setKey(udpKey))
         addFlowAndPacketAction(context, dpState.hostRecircOutputAction)
         // origMatch describes the inner packet
+        context.wcmatch.clearSeenFields()
         matchOnInnerPacket(vni, context.origMatch, outerFlowKey)
     }
 
@@ -326,12 +328,14 @@ trait FlowTranslator {
         // may exist. Thus we match on tos and tll too.
         fmatch.fieldSeen(Field.TunnelTOS)
         fmatch.fieldSeen(Field.TunnelTTL)
+        fmatch.fieldSeen(Field.NetworkProto)
     }
 
     private def addActionsToPrepareOuterPacket(
             context: PacketContext,
             virtualActionIndex: Int,
             addFlowAndPacketAction: AddFlowAction): Unit = {
+        context.wcmatch.doNotTrackSeenFields()
         // Now that the packet has recirculated, reset the fields to their
         // original values, as seen by the simulation of the outer packet.
         var needsEth = true
@@ -377,5 +381,6 @@ trait FlowTranslator {
                     context.wcmatch.getSrcPort,
                     context.wcmatch.getDstPort)))
         }
+        context.wcmatch.doTrackSeenFields()
     }
 }

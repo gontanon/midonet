@@ -82,6 +82,22 @@ object LinkOps {
         }
     }
 
+    def deleteLink(devName: String): Unit = {
+        val (channel, protocol) = prepare()
+        try {
+            val buf = BytesUtil.instance.allocateDirect(2048)
+            val writer = new NetlinkBlockingWriter(channel)
+            val reader = new NetlinkReader(channel)
+
+            val dev = build(devName)
+            protocol.prepareLinkDel(buf, dev)
+            writer.write(buf)
+            reader.read(buf) // in case there are errors
+        } finally {
+            channel.close()
+        }
+    }
+
     def deleteLink(link: Link): Unit = {
         val (channel, protocol) = prepare()
         try {

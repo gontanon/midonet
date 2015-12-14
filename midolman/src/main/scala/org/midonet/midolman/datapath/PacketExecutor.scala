@@ -95,8 +95,11 @@ sealed class PacketExecutor(dpState: DatapathState,
     override def onEvent(event: PacketContextHolder, sequence: Long,
                          endOfBatch: Boolean): Unit = {
         val context = event.packetExecRef
+        if (context eq null)
+            return
         if (sequence % numHandlers == index &&
-            (executesRecircPackets || !context.isRecirc)) {
+               ((executesRecircPackets && context.isRecirc) ||
+               (!executesRecircPackets && !context.isRecirc))) {
             event.packetExecRef = null
             val actions = context.packetActions
             val packet = context.packet

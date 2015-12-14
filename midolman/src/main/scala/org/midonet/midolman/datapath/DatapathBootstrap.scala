@@ -29,6 +29,8 @@ import org.midonet.netlink._
 import org.midonet.netlink.exceptions.NetlinkException
 import org.midonet.odp.{Datapath, OvsNetlinkFamilies, OvsProtocol}
 
+import scala.util.control.NonFatal
+
 object DatapathBootstrap {
     class DatapathBootstrapError(msg: String, cause: Throwable = null)
         extends Exception(msg, cause)
@@ -89,6 +91,10 @@ object DatapathBootstrap {
     }
 
     private def bootstrapRecircVeth(config: MidolmanConfig): Unit = {
+        try {
+            LinkOps.deleteLink(config.datapath.recircHostName)
+        } catch { case NonFatal(ignore) =>
+        }
         val LinkOps.Veth(hostSide, _) = LinkOps.createVethPair(
             config.datapath.recircHostName,
             config.datapath.recircMnName,

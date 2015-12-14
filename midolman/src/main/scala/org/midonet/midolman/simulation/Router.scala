@@ -82,8 +82,9 @@ class Router(override val id: UUID,
              override val cfg: Config,
              override val rTable: RoutingTable,
              override val routerMgrTagger: TagManager,
+             override val vniToPort: util.Map[Int, UUID],
              val arpCache: ArpCache)
-        extends RouterBase[IPv4Addr](id, cfg, rTable, routerMgrTagger) with MirroringDevice {
+        extends RouterBase[IPv4Addr] with MirroringDevice {
 
     import Router._
 
@@ -277,11 +278,20 @@ class Router(override val id: UUID,
         sendIPPacket(ip, context)
     }
 
-    private def getPeerMac(peer: Port, ipDest: IPv4Addr): MAC =
+    private def getPeerMac(peer: Port, ipDest: IPv4Addr, context: PacketContext): MAC =
         peer match {
-           case rtPort: RouterPort => rtPort.portMac
-           case bridgePort: BridgePort => peekBridge(bridgePort, ipDest)
-           case _ => null
+            case l2Port: RouterPort if l2Port.isL2 =>
+                context.log.debug(s"Checking peer's peering table for $ipDest")
+                val mac = l2Port.peeringTable.getLocal(ipDest)
+                if (mac ne null)
+                    context.encapIpDst = ipDest
+                mac
+            case rtPort: RouterPort =>
+                rtPort.portMac
+            case bridgePort: BridgePort =>
+                peekBridge(bridgePort, ipDest)
+            case _ =>
+                null
         }
 
     private def peekBridge(port: BridgePort, ipDest: IPv4Addr): MAC = {
@@ -321,7 +331,7 @@ class Router(override val id: UUID,
         }
 
         val peer = if (outPort.isInterior) tryGet[Port](outPort.peerId) else null
-        var mac = getPeerMac(peer, ipDest)
+        var mac = getPeerMac(peer, ipDest, context)
         if (mac eq null) {
             val nextHopInt = rt.nextHopGateway
             val nextHopIP =
@@ -329,7 +339,7 @@ class Router(override val id: UUID,
                     ipDest // last hop
                 } else {
                     val ip = IPv4Addr(nextHopInt)
-                    mac = getPeerMac(peer, ip)
+                    mac = getPeerMac(peer, ip, context)
                     ip
                 }
             if (mac eq null)

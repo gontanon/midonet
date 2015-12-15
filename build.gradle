@@ -547,12 +547,12 @@ task wrapper(type: Wrapper) {
 }
 
 task copy_to_override(type:Exec) {
-    commandLine 'tests/copy_to_override.sh', 'override_v2'
+    commandLine 'sudo', 'tests/copy_to_override.sh', 'override_v2'
 }
 
 task sandbox(type:Exec, dependsOn: copy_to_override) {
     workingDir './tests/'
-    commandLine 'sandbox-manage', '-c', 'sandbox.conf', 'run', 'default_v2'
+    commandLine 'sudo', 'sandbox-manage', '-c', 'sandbox.conf', 'run', 'default_v2'
     commandLine += '--name=mdts'
     commandLine += '--override=sandbox/override_v2'
     commandLine += '--provision=sandbox/provisioning/all-provisioning.sh'
@@ -560,7 +560,7 @@ task sandbox(type:Exec, dependsOn: copy_to_override) {
 
 task sandbox_stop(type:Exec) {
     workingDir './tests/'
-    commandLine 'sandbox-manager', 'stop-all', '--remove'
+    commandLine 'sudo', 'sandbox-manage', 'stop-all', '--remove'
 }
 
 task mdts(type:Exec) {

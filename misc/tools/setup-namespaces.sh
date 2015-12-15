@@ -52,3 +52,12 @@ ip link set rightns netns right
 ip netns exec right ip link set rightns up
 ip netns exec right ip address add 10.25.25.2/24 dev rightns
 ip netns exec right ip link set dev lo up
+
+
+ip netns add other
+ip link add name otherdp type veth peer name otherns
+ip link set otherdp up
+ip link set otherns netns other
+ip netns exec other ip link set otherns up
+ip netns exec other ip address add 192.168.1.2/24 dev otherns
+ip netns exec other ip link set dev lo up
